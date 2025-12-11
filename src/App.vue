@@ -15,7 +15,8 @@ const handleSubmit = () => {
     disable.value = true;
     streamText.value = "";
     ollamaGenerate(form.model, form.message).then(async (reader) => {
-        if (!reader) return;
+        if (!reader) { disable.value = false; return; }
+
         const decoder = new TextDecoder();
         let buffer = "";
 
@@ -35,8 +36,7 @@ const handleSubmit = () => {
                     };
                     streamText.value += json.response;
                     await nextTick();
-                    if (json.done) console.info("Stream finished");
-                    disable.value = false;
+                    if (json.done) { disable.value = false; console.info("Stream finished"); }
                 } catch (e) {
                     console.warn("Failed to parse line:", line);
                 }
@@ -53,8 +53,12 @@ const handleListModels = () => {
 </script>
 
 <template>
-    <button @click="handleListModels">list models</button>
-    <RagForm v-model:model="form.model" v-model:message="form.message" :handle-submit="handleSubmit" :disable="disable" :models="models" />
-    <br />
-    <RagResult :reply-message="streamText" :done="disable" />
+    <main>
+        <div class="container container-sm">
+            <button :disabled="disable" @click="handleListModels">list models</button>
+            <RagForm v-model:model="form.model" v-model:message="form.message" :handle-submit="handleSubmit" :disable="disable" :models="models" />
+            <br />
+            <RagResult :reply-message="streamText" :done="disable" />
+        </div>
+    </main>
 </template>

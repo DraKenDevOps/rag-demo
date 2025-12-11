@@ -2,6 +2,7 @@ const OLLAMA_API = "http://192.168.154.17:11434";
 const headers = new Headers();
 headers.set("Content-Type", "application/json");
 
+// https://docs.ollama.com/api/introduction
 export async function ollamaVersion() {
     try {
         const response = await fetch(`${OLLAMA_API}/api/version`, { headers });
@@ -55,10 +56,10 @@ export async function ollamaGenerate(model: string, message: string) {
         system: "",
         think: false,
         raw: false,
-        keep_alive: "1m",
+        keep_alive: "3m",
         options: { temperature: 0.8 },
         logprobs: false,
-        top_logprobs: false
+        top_logprobs: 0
     });
     console.log(body)
     try {
